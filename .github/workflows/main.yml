@@ -1,20 +1,31 @@
-name: DevOps Pipeline 
- 
-on: 
-  push: 
-    branches: [ "main"] 
- 
-jobs: 
-  build: 
-    runs-on: windows-latest 
- 
-    steps: 
-    - name: Checkout code 
-      uses: actions/checkout@v4 
- 
-    - name: Setup Python 
-      uses: actions/setup-python@v5 
-      with: 
-        python-version: '3.12'
-    - name: Run Python File 
-        run: python app.py 
+name: DevOps Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'   # specify your required version
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run tests
+      run: |
+        pytest --maxfail=1 --disable-warnings -q
+
+    - name: Build package
+      run: |
+        python setup.py sdist bdist_wheel
